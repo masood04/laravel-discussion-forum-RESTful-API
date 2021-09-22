@@ -29,6 +29,7 @@ class ThreadFactory extends Factory
             'content' => $this->faker->sentence(8),
             'slug' => Str::slug($title),
             'solve' => $this->faker->numberBetween(0,1),
+            'replies_count' => $this->faker->numberBetween(0,20),
             'user_id' => User::factory()->create()->id,
             ];
     }

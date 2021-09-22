@@ -20,6 +20,8 @@ class CreateThreadsTable extends Migration
             $table->string('content');
             $table->string('slug');
 
+            $table->integer('replies_count')->default(0);
+
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete()

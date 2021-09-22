@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\Tag\TagController;
+use App\Http\Controllers\API\Thread\ThreadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Auth\LoginController;
@@ -29,3 +30,5 @@ Route::prefix('Auth')->group( function (){
 });
 
 Route::resource('tags', TagController::class);
+
+Route::resource('threads', ThreadController::class);

@@ -19,6 +19,8 @@ class ThreadIndexResurece extends JsonResource
             'content' => $this->content,
             'owner_name' => $this->user->name,
             'created_at' => $this->created_at,
+            'replies' => $this->replies_count,
+            'solve' => $this->solve,
         ];
     }
 }

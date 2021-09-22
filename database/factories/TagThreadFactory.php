@@ -24,8 +24,8 @@ class TagThreadFactory extends Factory
     public function definition()
     {
         return [
-//   'tag_id' => Tag::factory()->create()->id,
-            'tag_id' => $this->faker->numberBetween(1, 7),
+//        'tag_id' => Tag::factory()->create()->id,
+            'tag_id' => $this->faker->numberBetween(1, 5),
             'thread_id' => Thread::factory()->create()->id,
 
         ];

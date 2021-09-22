@@ -17,8 +17,8 @@ class Tag extends Model
     }
 
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+//    public function getRouteKeyName()
+//    {
+//        return 'slug';
+//    }
 }
