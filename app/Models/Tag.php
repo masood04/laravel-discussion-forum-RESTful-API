@@ -15,4 +15,10 @@ class Tag extends Model
     {
         return  $this->belongsToMany(Thread::class,'tag_threads');
     }
+
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

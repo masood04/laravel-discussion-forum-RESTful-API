@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Tag\TagController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Auth\LoginController;
@@ -26,3 +27,5 @@ Route::prefix('Auth')->group( function (){
     Route::post('logout',[LoginController::class,'logout']);
 
 });
+
+Route::resource('tags', TagController::class);
