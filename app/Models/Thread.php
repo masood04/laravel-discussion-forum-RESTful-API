@@ -12,14 +12,24 @@ class Thread extends Model
     protected $guarded = [];
 
 
+    protected $fillable = [
+        'title',
+        'content',
+        'slug',
+        'user_id',
+        'replies_count',
+        'solve'
+    ];
+
+
     public function answers()
     {
-        return  $this->hasMany(Answer::class);
+        return $this->hasMany(Answer::class);
     }
 
     public function user()
     {
-        return  $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function subscribes()
@@ -29,7 +39,7 @@ class Thread extends Model
 
     public function tags()
     {
-       return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class);
     }
 
     public function getRouteKeyName()

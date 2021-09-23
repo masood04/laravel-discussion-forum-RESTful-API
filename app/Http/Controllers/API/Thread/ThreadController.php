@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 class ThreadController extends Controller
@@ -18,14 +19,14 @@ class ThreadController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum')->except('index','show');
+        $this->middleware('auth:sanctum')->except('index', 'show');
     }
 
     /**
      * Display a listing of the resource.
      *
-     *@return JsonResource
      * @param Request $request
+     * @return JsonResource
      */
     public function index(Request $request): JsonResource
     {
@@ -42,10 +43,10 @@ class ThreadController extends Controller
         } elseif ($popular) {
             $threads = $threads->orderBy('replies_count', 'desc')->latest()->paginate(10);
         } else {
-            $threads= $threads->latest()->paginate(10);
+            $threads = $threads->latest()->paginate(10);
         }
 
-         return ThreadIndexResurece::collection($threads);
+        return ThreadIndexResurece::collection($threads);
     }
 
     /**
@@ -57,7 +58,7 @@ class ThreadController extends Controller
     public function store(ThreadRequest $request): JsonResponse
     {
         $thread = Thread::create([
-           'title' => $request->input('title'),
+            'title' => $request->input('title'),
             'content' => $request->input('content'),
             'slug' => Str::slug($request->input('title')),
             'user_id' => auth()->id(),
@@ -72,7 +73,7 @@ class ThreadController extends Controller
         return response()->json([
             'massage' => 'thread created successfully',
             'created' => true
-        ],Response::HTTP_CREATED);
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -96,16 +97,24 @@ class ThreadController extends Controller
      */
     public function update(ThreadRequest $request, Thread $thread): JsonResponse
     {
-        $thread->update([
-            'title' => $request->input('title'),
-            'content' => $request->input('content'),
-            'slug' => Str::slug($request->input('title'))
-        ]);
 
-        return response()->json([
-            'massage' => 'thread updated successfully',
-            'created' => true
-        ],Response::HTTP_OK);
+        if (Gate::allows('edit:thread' , $thread)) {
+            $thread->update([
+                'title' => $request->input('title'),
+                'content' => $request->input('content'),
+                'slug' => Str::slug($request->input('title'))
+            ]);
+
+            return response()->json([
+                'massage' => 'thread updated successfully',
+                'created' => true
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'massage' => 'access denied!',
+                'status' => false
+            ], Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -116,12 +125,22 @@ class ThreadController extends Controller
      */
     public function destroy(Thread $thread): JsonResponse
     {
+        if (Gate::allows('edit:thread', $thread)) {
 
-        $thread->delete();
 
-        return response()->json([
-            'massage' => 'thread deleted successfully',
-            'created' => true
-        ],Response::HTTP_CREATED);
+            $thread->delete();
+
+            return response()->json([
+                'massage' => 'thread deleted successfully',
+                'status' => true
+            ], Response::HTTP_OK);
+
+        } else {
+
+            return response()->json([
+                'massage' => 'access denied!',
+                'status' => false
+            ], Response::HTTP_FORBIDDEN);
+        }
     }
 }

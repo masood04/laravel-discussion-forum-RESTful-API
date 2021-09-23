@@ -9,6 +9,7 @@ use App\Models\Thread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class AnswerController extends Controller
 {
@@ -20,6 +21,7 @@ class AnswerController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -53,12 +55,21 @@ class AnswerController extends Controller
      */
     public function destroy(Answer $answer): JsonResponse
     {
-        $answer->delete();
 
-        return response()->json([
-            'status' => true,
-            'massage' => 'answer deleted successfully'
-        ], Response::HTTP_OK);
+        if (Gate::allows('edit:answer', $answer)) {
+            $answer->delete();
+
+            return response()->json([
+                'status' => true,
+                'massage' => 'answer deleted successfully'
+            ], Response::HTTP_OK);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'massage' => 'access denied!'
+            ], Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -71,13 +82,22 @@ class AnswerController extends Controller
      */
     public function update(AnswerRequest $request, Answer $answer): JsonResponse
     {
-        $answer->update([
-            'content' => $request->input('content')
-        ]);
+        if (Gate::allows('edit:answer', $answer)) {
+            $answer->update([
+                'content' => $request->input('content')
+            ]);
 
-        return response()->json([
-            'status' => true,
-            'massage' => 'answer updated successfully'
-        ], Response::HTTP_OK);
+            return response()->json([
+                'status' => true,
+                'massage' => 'answer updated successfully'
+            ], Response::HTTP_OK);
+
+        } else {
+            return response()->json([
+                'status' => false,
+                'massage' => 'access denied!'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
     }
 }
