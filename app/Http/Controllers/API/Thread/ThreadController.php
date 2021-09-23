@@ -83,7 +83,7 @@ class ThreadController extends Controller
      */
     public function show(Thread $thread): JsonResource
     {
-        $thread = Thread::findOrFail($thread);
+        $thread = Thread::find($thread);
         return ThreadIndexResurece::collection($thread);
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\RegisterController;
+use App\Http\Controllers\API\Answer\AnswerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,3 +33,5 @@ Route::prefix('Auth')->group( function (){
 Route::resource('tags', TagController::class);
 
 Route::resource('threads', ThreadController::class);
+
+Route::resource('answers',AnswerController::class)->except('index','show');

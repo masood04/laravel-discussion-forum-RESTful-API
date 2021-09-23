@@ -28,7 +28,6 @@ class CreateAnswersTable extends Migration
                 ->cascadeOnUpdate();
 
             $table->string('content');
-            $table->string('slug')->nullable();
 
 
 

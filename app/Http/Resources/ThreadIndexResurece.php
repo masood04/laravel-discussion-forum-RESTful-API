@@ -21,6 +21,7 @@ class ThreadIndexResurece extends JsonResource
             'created_at' => $this->created_at,
             'replies' => $this->replies_count,
             'solve' => $this->solve,
+            'answers' => $this->answers
         ];
     }
 }
