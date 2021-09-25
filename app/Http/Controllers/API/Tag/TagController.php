@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\API\Tag;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\UserRepository;
 use App\Http\Resources\TagResurece;
 use App\Http\Resources\ThreadIndexResurece;
 use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class TagController extends Controller
@@ -40,7 +41,7 @@ class TagController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $user = User::find(auth()->id());
+        $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
 
         if ($user->hasPermissionTo('tag-management')) {
@@ -87,7 +88,7 @@ class TagController extends Controller
     {
         $request->validate(['name' => 'required|string|max:255']);
 
-        $user = User::find(auth()->id());
+        $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
         if ($user->hasPermissionTo('tag-management')) {
             $tag->update([
@@ -117,7 +118,7 @@ class TagController extends Controller
     {
         $tag->delete();
 
-        $user = User::find(auth()->id());
+        $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
         if ($user->hasPermissionTo('tag-management')) {
             $tag->delete();

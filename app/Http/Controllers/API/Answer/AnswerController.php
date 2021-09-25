@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\API\Answer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\UserRepository;
 use App\Http\Requests\AnswerRequest;
 use App\Models\Answer;
 use App\Models\Thread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class AnswerController extends Controller
@@ -55,8 +57,10 @@ class AnswerController extends Controller
      */
     public function destroy(Answer $answer): JsonResponse
     {
+        $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
-        if (Gate::allows('edit:answer', $answer)) {
+
+        if (Gate::allows('edit:answer', $answer ) || $user->hasRole('answer-admin')) {
             $answer->delete();
 
             return response()->json([
@@ -82,7 +86,9 @@ class AnswerController extends Controller
      */
     public function update(AnswerRequest $request, Answer $answer): JsonResponse
     {
-        if (Gate::allows('edit:answer', $answer)) {
+        $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
+
+        if (Gate::allows('edit:answer', $answer) || $user->hasRole('answer-admin') ) {
             $answer->update([
                 'content' => $request->input('content')
             ]);

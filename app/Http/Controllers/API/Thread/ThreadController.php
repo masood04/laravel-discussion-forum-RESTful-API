@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Thread;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\UserRepository;
 use App\Http\Requests\ThreadRequest;
 use App\Http\Resources\ThreadIndexResurece;
 use App\Models\TagThread;
@@ -11,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
@@ -125,7 +127,9 @@ class ThreadController extends Controller
      */
     public function destroy(Thread $thread): JsonResponse
     {
-        if (Gate::allows('edit:thread', $thread)) {
+        $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
+
+        if (Gate::allows('edit:thread', $thread) || $user->hasRole('thread-admin')) {
 
 
             $thread->delete();
