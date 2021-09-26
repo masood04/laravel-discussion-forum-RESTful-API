@@ -53,8 +53,5 @@ class User extends Authenticatable
         return  $this->hasMany(Thread::class);
     }
 
-    public function subscribes()
-    {
-        return  $this->hasMany(Subscribe::class);
-    }
+
 }

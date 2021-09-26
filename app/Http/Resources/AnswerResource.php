@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ThreadIndexResurece extends JsonResource
+class AnswerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,13 +15,9 @@ class ThreadIndexResurece extends JsonResource
     public function toArray($request)
     {
         return[
-            'title' => $this->title,
             'content' => $this->content,
-            'owner_name' => $this->user->email,
-            'created_at' => $this->created_at,
-            'replies' => $this->replies_count,
-            'solve' => $this->solve,
-            'answers' => AnswerResource::collection($this->answers)
+            'user_name' => $this->user,
+            'created' => $this->created_at,
         ];
     }
 }

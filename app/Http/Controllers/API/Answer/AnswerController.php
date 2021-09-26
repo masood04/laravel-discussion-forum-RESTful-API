@@ -7,11 +7,13 @@ use App\Http\Repository\UserRepository;
 use App\Http\Requests\AnswerRequest;
 use App\Models\Answer;
 use App\Models\Thread;
+use App\Models\User;
+use App\Notifications\NewReply;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 
 class AnswerController extends Controller
 {
@@ -34,13 +36,28 @@ class AnswerController extends Controller
     public function store(AnswerRequest $request): JsonResponse
     {
         $thread_id = $request->input('thread_id');
-        Answer::create([
+        $answer = Answer::create([
             'content' => $request->input('content'),
             'user_id' => auth()->id(),
             'thread_id' => $thread_id,
         ]);
 
+        //add reply count
         Thread::query()->where('id', $thread_id)->increment('replies_count');
+
+        //add score of user who have answered
+        if (Thread::find($thread_id)->user_id !== \auth()->id()) {
+            User::where('id', $answer->user_id)->increment('score', 5);
+        }
+
+        //get thread for notification
+        $threadOwner = Thread::find($thread_id);
+
+        //get owner of thread
+        $owner = User::query()->where('id', $threadOwner->user_id)->get();
+
+        //send new reply notification for owner of thread
+        Notification::send($owner, new NewReply($answer));
 
         return response()->json([
             'created' => true,
@@ -60,7 +77,7 @@ class AnswerController extends Controller
         $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
 
-        if (Gate::allows('edit:answer', $answer ) || $user->hasRole('answer-admin')) {
+        if (Gate::allows('edit:answer', $answer) || $user->hasRole('answer-admin')) {
             $answer->delete();
 
             return response()->json([
@@ -88,7 +105,7 @@ class AnswerController extends Controller
     {
         $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
-        if (Gate::allows('edit:answer', $answer) || $user->hasRole('answer-admin') ) {
+        if (Gate::allows('edit:answer', $answer) || $user->hasRole('answer-admin')) {
             $answer->update([
                 'content' => $request->input('content')
             ]);
