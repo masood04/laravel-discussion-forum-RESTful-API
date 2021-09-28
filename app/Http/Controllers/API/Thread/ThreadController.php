@@ -32,19 +32,24 @@ class ThreadController extends Controller
      */
     public function index(Request $request): JsonResource
     {
-        $solved = $request->input('solve');
-        $unsolved = $request->input('unsolved');
-        $popular = $request->input('popular');
+        $filter = $request->input('filter');
 
         $threads = Thread::query();
 
-        if ($solved) {
+        if ($filter === 'solved') {
+
             $threads = $threads->where('solve', 1)->latest()->paginate(10);
-        } elseif ($unsolved) {
+
+        } elseif ($filter === 'unsolved') {
+
             $threads = $threads->where('solve', 0)->latest()->paginate(10);
-        } elseif ($popular) {
+
+        } elseif ($filter === 'most-answered') {
+
             $threads = $threads->orderBy('replies_count', 'desc')->latest()->paginate(10);
+
         } else {
+
             $threads = $threads->latest()->paginate(10);
         }
 
@@ -100,7 +105,7 @@ class ThreadController extends Controller
     public function update(ThreadRequest $request, Thread $thread): JsonResponse
     {
 
-        if (Gate::allows('edit:thread' , $thread)) {
+        if (Gate::allows('edit:thread', $thread)) {
             $thread->update([
                 'title' => $request->input('title'),
                 'content' => $request->input('content'),
