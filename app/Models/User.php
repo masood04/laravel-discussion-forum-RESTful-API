@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -45,13 +45,16 @@ class User extends Authenticatable
 
     public function answers()
     {
-        return  $this->hasMany(Answer::class);
+        return $this->hasMany(Answer::class);
     }
 
     public function threads()
     {
-        return  $this->hasMany(Thread::class);
+        return $this->hasMany(Thread::class);
     }
 
-
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
 }

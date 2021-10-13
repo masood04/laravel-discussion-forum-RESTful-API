@@ -15,13 +15,12 @@ class ThreadIndexResurece extends JsonResource
     public function toArray($request)
     {
         return[
+            'users' => $this->user->name ,
             'title' => $this->title,
             'content' => $this->content,
-            'owner_name' => $this->user->email,
             'created_at' => $this->created_at,
             'replies' => $this->replies_count,
-            'solve' => $this->solve,
-            'answers' => AnswerResource::collection($this->answers)
+            'slug' => $this->slug,
         ];
     }
 }

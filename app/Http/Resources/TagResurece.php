@@ -17,7 +17,7 @@ class TagResurece extends JsonResource
         return[
             'name' => $this->name,
             'slug' => $this->slug,
-            'threads' => ThreadIndexResurece::collection($this->threads->title)
+            'threads' => ThreadIndexResurece::collection($this->threads)
         ];
     }
 }

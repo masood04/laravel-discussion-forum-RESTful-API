@@ -28,3 +28,5 @@ require __DIR__.'/API/auth.php';
 
 //discussion routes
 require __DIR__ . '/API/forum.php';
+
+Route::get('/users/{user}',[\App\Http\Controllers\API\User\UserController::class,'showUserProfileByName']);

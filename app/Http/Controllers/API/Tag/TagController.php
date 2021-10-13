@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Repository\UserRepository;
 use App\Http\Resources\TagResurece;
 use App\Http\Resources\ThreadIndexResurece;
+use App\Http\Resources\ThreadShowResource;
 use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class TagController extends Controller
     {
         $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
-
+        //only admins can create tags
         if ($user->hasPermissionTo('tag-management')) {
             $request->validate(['name' => 'required|string|max:255']);
 
@@ -74,7 +75,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag): JsonResource
     {
-        return ThreadIndexResurece::collection($tag->threads()->latest()->get());
+        return ThreadShowResource::collection($tag->threads()->latest()->get());
     }
 
     /**
@@ -87,9 +88,9 @@ class TagController extends Controller
     public function update(Request $request, Tag $tag): JsonResponse
     {
         $request->validate(['name' => 'required|string|max:255']);
-
         $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
+        //only admins can update tags
         if ($user->hasPermissionTo('tag-management')) {
             $tag->update([
                 'name' => $request->input('name'),

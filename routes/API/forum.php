@@ -9,6 +9,7 @@ Route::prefix('discuss')->group(function (){
     Route::resource('threads', ThreadController::class);
     Route::resource('answers',AnswerController::class)->except('index','show');
     Route::resource('tags', TagController::class);
+    Route::post('threads/{thread}/solved',[ThreadController::class,'solveThread']);
 
 });
 

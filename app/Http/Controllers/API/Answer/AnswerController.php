@@ -36,6 +36,7 @@ class AnswerController extends Controller
     public function store(AnswerRequest $request): JsonResponse
     {
         $thread_id = $request->input('thread_id');
+
         $answer = Answer::create([
             'content' => $request->input('content'),
             'user_id' => auth()->id(),
@@ -76,7 +77,7 @@ class AnswerController extends Controller
     {
         $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
-
+        //only admins and owner of answer can edit(delete or update) answer
         if (Gate::allows('edit:answer', $answer) || $user->hasRole('answer-admin')) {
             $answer->delete();
 

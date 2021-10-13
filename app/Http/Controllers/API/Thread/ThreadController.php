@@ -71,6 +71,7 @@ class ThreadController extends Controller
             'user_id' => auth()->id(),
         ]);
 
+        //insert data in pivot table
         TagThread::create([
             'tag_id' => $request->input('tag_id'),
             'thread_id' => $thread->id,
@@ -105,6 +106,7 @@ class ThreadController extends Controller
     public function update(ThreadRequest $request, Thread $thread): JsonResponse
     {
 
+        //only admin and owner of thread can edit(delete or update)thread
         if (Gate::allows('edit:thread', $thread)) {
             $thread->update([
                 'title' => $request->input('title'),
@@ -134,6 +136,7 @@ class ThreadController extends Controller
     {
         $user = resolve(UserRepository::class)->getUserByIdForRole(Auth::id());
 
+        //only admin and owner of thread can edit(delete or update)thread
         if (Gate::allows('edit:thread', $thread) || $user->hasRole('thread-admin')) {
 
 
@@ -151,5 +154,29 @@ class ThreadController extends Controller
                 'status' => false
             ], Response::HTTP_FORBIDDEN);
         }
+    }
+
+
+    public function solveThread(Request $request, Thread $thread)
+    {
+        //validate request input
+        $request->validate([
+            'solve' => 'required'
+        ]);
+
+        if ($request->input('solve') == 1) {
+
+            //find the thread by route model binding
+            $thread->update([
+                'solve' => 1
+            ]);
+
+            return \response()->json([
+                'status' => true,
+                'massage' => 'thread solved and updated successfully'
+            ], Response::HTTP_OK);
+        }
+
+        return Response::HTTP_UNPROCESSABLE_ENTITY;
     }
 }
