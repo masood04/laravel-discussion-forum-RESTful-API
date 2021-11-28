@@ -21,13 +21,15 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+        // assign super-admin role by email
+
         $user->email == config('permission.default_super_admin_email') ? $user->assignRole('super-admin') : $user->assignRole('user');
 
         $token = $user->createToken('user_token');
+
         return response()->json([
             'status' => true,
             'massage' => 'user created successfully',
-            'token' => $token->plainTextToken
         ], Response::HTTP_CREATED);
     }
 }

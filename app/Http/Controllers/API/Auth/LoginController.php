@@ -18,7 +18,7 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
-        if (Auth::attempt($request->only(['email', 'password']))) {
+        if (Auth::attempt($request->only(['email', 'password']),$request->input("remember_me"))) {
             return response()->json(Auth::user(), Response::HTTP_OK);
         }
 
